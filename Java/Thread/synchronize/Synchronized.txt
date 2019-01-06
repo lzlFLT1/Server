@@ -21,6 +21,7 @@ synchronized 关键字的缺陷：
         每个锁仅有单一的条件（某个实例）：Lock 锁可以用 Condition 判断什么情况下才加锁
         无法知道是否成功的获取到锁
 
+JVM 通过 Monitor 来对代码加锁和解锁
 
 使用注意点：
     锁对象不能为 null
