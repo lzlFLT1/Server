@@ -3,7 +3,7 @@ package kasei.javase.se.thread.correspond.demo1;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-// 演示共享内存的方式，实现进程间通信和同步
+// 演示共享内存的方式，实现线程间通信和同步
 public class Ticket implements Runnable {
 
     private Integer num = 100;
