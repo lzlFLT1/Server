@@ -84,32 +84,34 @@ public class HttpClientUtil {
      * @param params 发送的请求参数
      * @return 返回的 json 字符串
      * */
-    public static String postForm(String url, Map<String, String> params){
-
-        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-
-        Set<String> keySet = params.keySet();
-        for (String key:keySet) {
-            formParams.add(new BasicNameValuePair(key,  params.get(key)));
-        }
-
-
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, Consts.UTF_8);
+    public String postForm(String url, Map<String, String> params){
+        // 创建一个 http 客户端实例
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        // 创建一个 post 请求实例
         HttpPost httpPost = new HttpPost(url);
+        // 设置 post 请求头
         Header[] headers = new Header[]{
                 new BasicHeader("accept", "application/json;q=1.0"), // 设置客户端接收的返回数据类型
                 new BasicHeader("accept-type", "utf-8;q=1.0"), // 表示客户端能接受的字符集类型
                 new BasicHeader("content-type", "application/x-www-form-urlencoded;charset=utf-8"), // 表示请求内容的 MIME 类型
         };
         httpPost.setHeaders(headers);
+
+        // 设置 post 传递的参数
+        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+        Set<String> keySet = params.keySet();
+        for (String key:keySet) {
+            formParams.add(new BasicNameValuePair(key,  params.get(key)));
+        }
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, Consts.UTF_8); // 设置请求参数的编码格式
         httpPost.setEntity(entity);
 
-        CloseableHttpClient httpclient = null;
-        CloseableHttpResponse response = null;
+
+        // 正式开始发送请求
+        CloseableHttpResponse response = null; // 定义一个返回实例，用于接受返回数据
         InputStream content = null;
         try {
-            httpclient = HttpClients.createDefault();
-            response = httpclient.execute(httpPost);
+            response = httpclient.execute(httpPost); // 发送 post 请求
 
             HttpEntity responseEntity = response.getEntity();
             content = responseEntity.getContent();
