@@ -84,7 +84,7 @@ public class HttpClientUtil {
      * @param params 发送的请求参数
      * @return 返回的 json 字符串
      * */
-    public String formPost(String url, List<NameValuePair> params){
+    public static String formPost(String url, List<NameValuePair> params){
         // 创建一个 http 客户端实例
         CloseableHttpClient httpclient = HttpClients.createDefault();
         // 创建一个 post 请求实例
