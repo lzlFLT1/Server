@@ -84,7 +84,7 @@ public class HttpClientUtil {
      * @param params 发送的请求参数
      * @return 返回的 json 字符串
      * */
-    public String postForm(String url, Map<String, String> params){
+    public String formPost(String url, List<NameValuePair> params){
         // 创建一个 http 客户端实例
         CloseableHttpClient httpclient = HttpClients.createDefault();
         // 创建一个 post 请求实例
@@ -93,19 +93,13 @@ public class HttpClientUtil {
         Header[] headers = new Header[]{
                 new BasicHeader("accept", "application/json;q=1.0"), // 设置客户端接收的返回数据类型
                 new BasicHeader("accept-type", "utf-8;q=1.0"), // 表示客户端能接受的字符集类型
-                new BasicHeader("content-type", "application/x-www-form-urlencoded;charset=utf-8"), // 表示请求内容的 MIME 类型
+                new BasicHeader("content-type", "application/x-www-form-urlencoded;charset=utf-8") // 表示请求内容的 MIME 类型
         };
         httpPost.setHeaders(headers);
 
         // 设置 post 传递的参数
-        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-        Set<String> keySet = params.keySet();
-        for (String key:keySet) {
-            formParams.add(new BasicNameValuePair(key,  params.get(key)));
-        }
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, Consts.UTF_8); // 设置请求参数的编码格式
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, Consts.UTF_8); // 设置请求参数的编码格式
         httpPost.setEntity(entity);
-
 
         // 正式开始发送请求
         CloseableHttpResponse response = null; // 定义一个返回实例，用于接受返回数据
@@ -129,7 +123,9 @@ public class HttpClientUtil {
             return null;
         } finally {
             try {
-                response.close();
+                if (response != null) {
+                    response.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
