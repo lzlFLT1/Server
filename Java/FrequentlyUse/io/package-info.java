@@ -47,3 +47,12 @@ package kasei.javase.se.frequently.io;
  * ├─ PrintWriter
  * └─ CharArrayWriter
  * */
+
+/** Java 流关闭原则：
+ * 1. 自己创建的自己关闭，不是自己创建的不关闭
+ * 2. 输出流完成前需要调用 os.flush() 方法，将缓冲区中的数据写入到流中，防止出现数据丢失的问题
+ * */
+
+
+
+
