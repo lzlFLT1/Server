@@ -98,7 +98,7 @@ public class ZipStream {
     /** todo 对一个文件列表进行打包压缩，列表中的文件打包为一个文件夹，文件夹名称即为 zipFileName
      * @param fileList 需要压缩的文件列表
      * @param saveDir 压缩文件保存目录
-     * @param zipFileName 压缩文件名称（不包含扩展名）
+     * @param zipFileName 压缩文件名称（不包含扩展名，扩展名固定为 .zip）
      * @param cover 是否覆盖同名文件
      * */
     public static Boolean zip(List<File> fileList, File saveDir, String zipFileName, Boolean cover) {
