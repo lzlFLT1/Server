@@ -1,3 +1,11 @@
+
+// import java.util.zip.ZipEntry; // 不使用 JDK 自带的，因为会出现乱码
+// import java.util.zip.ZipOutputStream;
+
+import org.apache.tools.zip.ZipEntry; 
+import org.apache.tools.zip.ZipOutputStream;
+
+
 public class ZipStream {
 
     /* todo 使用方法演示 */
