@@ -109,14 +109,14 @@ public class ZipStream {
         }
 
         //创建 zip 输出流
-        File zipFile = new File(saveDir.getAbsolutePath() + File.separator + zipFileName);
+        File zipFile = new File(saveDir.getAbsolutePath() + File.separator + zipFileName + ".zip");
         if(zipFile.exists() && !cover){
-            System.out.println("保存目录中存在同名文件或同名文件夹");
+            System.out.println("保存目录中存在同名文件或同名文件夹 " + zipFileName + ".zip");
             return false;
         }
 
         if (zipFile.exists() && zipFile.isDirectory()) {
-            System.out.println("保存目录中的同名文件为文件夹，无法覆盖");
+            System.out.println("保存目录中的同名文件为文件夹，无法覆盖" + zipFileName + ".zip");
             return false;
         }
 
