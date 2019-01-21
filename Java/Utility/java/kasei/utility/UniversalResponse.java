@@ -2,16 +2,16 @@ package com.rongyue.efix.controller.utility.response;
 
 public class UniversalResponse {
 
-    private Integer status;
+    private Integer state;  // state 表示可枚举的状态；status 表示不可确定的状态
     private String message;
     private Object data;
 
-    public Integer getStatus() {
-        return status;
+    public Integer getState() {
+        return state;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setState(Integer state) {
+        this.state = state;
     }
 
     public String getMessage() {
@@ -30,8 +30,8 @@ public class UniversalResponse {
         this.data = data;
     }
 
-    public UniversalResponse(Integer status, String message, Object data) {
-        this.status = status;
+    public UniversalResponse(Integer state, String message, Object data) {
+        this.state = state;
         this.message = message;
         this.data = data;
     }
