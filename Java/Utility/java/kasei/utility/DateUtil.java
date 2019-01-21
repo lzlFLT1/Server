@@ -7,7 +7,7 @@ import java.util.Date;
 public class DateUtil {
 
     /** 字符串转日期
-     * @param "yyyy-MM-dd HH:mm:ss"
+     * @param pattern "yyyy-MM-dd HH:mm:ss:SSS"
      * */
     public static Date string2Date(String str, String pattern){
 
@@ -22,7 +22,7 @@ public class DateUtil {
     }
 
     /** 日期转字符串
-     * @param "yyyy-MM-dd HH:mm:ss"
+     * @param pattern "yyyy-MM-dd HH:mm:ss:SSS"
      * */
     public static String date2String(Date date, String pattern){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
