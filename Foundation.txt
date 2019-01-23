@@ -55,8 +55,8 @@ Parameter: 表示函数形参，即函数定义时定义的参数
 State：表示可以枚举的状态
 Status：表示不可确定数量的状态
 
-Recursion,Recursive,Cascade: 编写递归级联算法，先编写递归关闭条件，然后编写递归操作
-Loop,Circulate: 编写多层循环嵌套算法，先编写最内层的循环，然后自内而外逐层编写
+Recursion,Recursive,Cascade: 编写递归级联算法，先写递归关闭条件，再编写递归操作；根据递归关闭代码的位置分为：前置递归关闭 和 后置递归关闭
+Loop,Circulate: 编写多层循环嵌套算法，先写最内层的循环，再自内而外逐层编写
 
 
 
