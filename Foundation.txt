@@ -52,3 +52,12 @@ WebSocket： 跟普通是 Socket 一样，维持一个全双工的 TCP 连接，
 Argument：表示函数实参，即函数调用时传递参数
 Parameter: 表示函数形参，即函数定义时定义的参数
 
+State：表示可以枚举的状态
+Status：表示不可确定数量的状态
+
+Recursion,Recurrence,Cascade: 编写递归级联算法，先编写递归关闭条件，然后编写递归操作
+Loop,Circulate: 编写多层循环嵌套算法，先编写最内层的循环，然后自内而外逐层编写
+
+
+
+
