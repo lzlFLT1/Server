@@ -1,5 +1,22 @@
 public class StreamUtil {
 
+    
+    /** todo 将缓冲输入流写入到一个缓冲输出流中去，不关闭流，遵从流谁打开谁关闭原则
+     * */
+    public static Boolean bufferedIs2Os(BufferedInputStream bis, BufferedOutputStream bos, Integer bufferSize) {
+        try {
+            byte[] buffer = new byte[bufferSize];
+            int count = 0;
+            while ((count = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, count);
+            }
+            bos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } 
+        return true;
+    }
 
     /** todo 将输入流转化成输出流 
      * */
@@ -38,4 +55,7 @@ public class StreamUtil {
     public static void os2is(){
     
     }
+    
+    
+    
 }
