@@ -1,4 +1,4 @@
-public class FileSystemUti {
+public class FileSystemUtil {
 
     
     /** Create 
@@ -109,12 +109,19 @@ public class FileSystemUti {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            try{
+                if (bis != null) { bis.close(); }
+                if (bos != null) { bos.close(); }
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
 
 
-    /** todo 将缓冲输入流写入到一个缓冲输出流中去，完成后关闭输入流和输出流
+    /** todo 将缓冲输入流写入到一个缓冲输出流中去，不关闭流，遵从流谁打开谁关闭原则
      * */
     public static Boolean bufferedIs2Os(BufferedInputStream bis, BufferedOutputStream bos, Integer bufferSize) {
         try {
@@ -127,16 +134,68 @@ public class FileSystemUti {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            try{
-                if (bis != null) { bis.close(); }
-                if (bos != null) { bos.close(); }
-            }catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
+        } 
         return true;
     }
+    
+    
+    
+    /** todo 合法的往 Map 中添加 InputStream 对象
+     * @param map 存放 InputStream 对象的 Map
+     * @param entryPoint map 参数的 key， key 格式为  aa/bb/cc 表示输出目录会创建 aa/bb 目录
+     * @param is 存入 InputStream 对象
+     * @throws RuntimeException 格式校验出错
+     * @trap(坑): 如果添加的 entryPoint 重复，会覆盖之前添加的 InputStream 对象
+     * */
+    public static void putFileIs2Map(Map<String, InputStream> map, String entryPoint, InputStream is) throws RuntimeException {
+        if(map==null || entryPoint==null || is==null){
+            throw new RuntimeException("方法参数存在 null 值");
+        }
+
+        String trimEntryPoint = entryPoint.trim();
+        if("".equals(trimEntryPoint)
+                || trimEntryPoint.endsWith("/")
+                || trimEntryPoint.endsWith("\\")
+                || trimEntryPoint.startsWith("/")
+                || trimEntryPoint.startsWith("\\")){
+            throw new RuntimeException("第二个参数格式校验失败");
+        }
+        map.put(trimEntryPoint, is); // 会覆盖之前添加的同名 key 中的对象
+    }
+    
+    /** todo 重定向输入流到指定的文件系统目录
+     * @param isMap 输入流 Map，key 表示文件路径，最好配合 putFileIs2Map() 方法使用，避免出错
+     * */
+    public static Boolean redirectFileStream(Map<String, InputStream> isMap, File destDir)  {
+        if (isMap == null || destDir == null || !destDir.exists()) {
+            System.out.println("方法参数存在 null 值，或者目标目录不存在");
+            return false;
+        }
+
+        Boolean result = false;
+        for (String key : isMap.keySet()) {
+            File destFile = new File(destDir, key);
+            if(!destFile.exists()){
+                fileSystemCreate(destFile, false);
+            }
+
+            InputStream is = isMap.get(key);
+            BufferedInputStream bis = null;
+            BufferedOutputStream bos = null;
+            try {
+                bis = new BufferedInputStream(is);
+                bos = new BufferedOutputStream(new FileOutputStream(destFile));
+                result = bufferedIs2Os(bis, bos, 1024);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return result;
+    }
+    
+    
+    
+    
 
 }
