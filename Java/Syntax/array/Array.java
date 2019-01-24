@@ -26,5 +26,6 @@ class Array {
 		//3、静态初始化
 		int[] b = {2,4,6};
 		int[][] bb = {{1,2}, {4,5,6}, {8,5}};
+		Integer c = new Integer[]{1,2,3};
 	}
 }
