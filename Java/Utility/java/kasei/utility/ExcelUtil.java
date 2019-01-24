@@ -10,6 +10,237 @@ import java.util.List;
 
 public class ExcelUtil {
 
+	public static void demo() throws IOException {
+        Workbook wb = new XSSFWorkbook("C:\\Users\\kys2081\\Desktop\\Dimension.xlsx");
+        Workbook wb2 = new XSSFWorkbook();
+        Sheet sheet0 = wb.getSheetAt(0);
+
+        // 替换单值标记
+        String labelValue = "<labelValue>";
+        setLabelSingleValue(sheet0, labelValue, "wqeeeeeeeeeee");
+
+        // 替换列标记
+        String labelColumn = "<labelColumn>";
+        List<String> oneDimensionListColumn = new ArrayList<>();
+        oneDimensionListColumn.add("col1");
+        oneDimensionListColumn.add("col2");
+        oneDimensionListColumn.add("col3");
+        setLabelMultipleValueColumn(sheet0, labelColumn, oneDimensionListColumn);
+
+        // 替换行标记
+        String labelRow = "<labelRow>";
+        List<String> oneDimensionListRow = new ArrayList<>();
+        oneDimensionListRow.add("row1");
+        oneDimensionListRow.add("row2");
+        oneDimensionListRow.add("row3");
+        setLabelMultipleValueRow(sheet0, labelRow, oneDimensionListRow);
+
+        // 替换表标记，没写
+        String labelTable = "<labelTable>";
+        List<List<String>> twoDimensionList = new ArrayList<>();
+        List<String> subOneDimensionList1 = new ArrayList<>();
+        List<String> subOneDimensionList2 = new ArrayList<>();
+        twoDimensionList.add(subOneDimensionList1);
+        twoDimensionList.add(subOneDimensionList2);
+        setLabelMultipleValueTable(sheet0, labelTable, twoDimensionList);
+
+        FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\kys2081\\Desktop\\Dimension2.xlsx"));
+        wb.write(fos);
+        fos.flush();
+        fos.close();
+        //wb.close(); // 不能关闭该 wb 实例，否则会将数据保存到原文件中，导致覆盖了模板
+    }
+
+
+
+    public static void setLabelSingleValue(Sheet sheet, String label, String value){
+        Integer[] labelCoordinate = getLabelCoordinate(sheet, label);
+        if (labelCoordinate != null) {
+            setByCoordinate(sheet, labelCoordinate, value);
+        }
+    }
+    public static void setLabelMultipleValueColumn(Sheet sheet, String label, List<String> oneDimensionList){
+        Integer[] labelCoordinate = getLabelCoordinate(sheet, label);
+        if (labelCoordinate != null) {
+            List<String> originalColData = getColumnData(sheet, labelCoordinate[1]);
+            originalColData.remove(labelCoordinate[0].intValue()); // 覆盖原来的标签
+            for (int i = 0; i < oneDimensionList.size(); i++) {
+                originalColData.add(labelCoordinate[0] + i, oneDimensionList.get(i));
+            }
+            setColumnData(sheet, labelCoordinate[1], originalColData);
+        }
+    }
+    public static void setLabelMultipleValueRow(Sheet sheet, String label, List<String> oneDimensionList){
+        Integer[] labelCoordinate = getLabelCoordinate(sheet, label);
+        if (labelCoordinate != null) {
+            List<String> originalRowData = getRowData(sheet, labelCoordinate[0]);
+            originalRowData.remove(labelCoordinate[1].intValue()); // 覆盖原来的标签
+            for (int i = 0; i < oneDimensionList.size(); i++) {
+                originalRowData.add(labelCoordinate[1] + i, oneDimensionList.get(i));
+            }
+            setRowData(sheet, labelCoordinate[0], originalRowData);
+        }
+    }
+    public static void setLabelMultipleValueTable(Sheet sheet, String label, List<List<String>> twoDimensionsList){
+
+    }
+
+
+
+
+    public static List<String> getColumnData(Sheet sheet, Integer colNum){
+        if (sheet != null) {
+            List<String> strList = new ArrayList<>();
+            int lastRowNum = sheet.getLastRowNum();
+            for (int i = 0; i < lastRowNum; i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) {
+                    strList.add(i, null);
+                } else {
+                    Cell cell = row.getCell(colNum);
+                    if (cell == null) {
+                        strList.add(i, null);
+                    } else {
+                        strList.add(i, cell.getStringCellValue());
+                    }
+                }
+            }
+            return strList;
+        }
+        return null;
+    }
+    public static void setColumnData(Sheet sheet, Integer colNum, List<String> colData){
+        Integer[] variedCoordinate = new Integer[2];
+        variedCoordinate[1] = colNum;
+        for (int i = 0; i < colData.size(); i++) {
+            variedCoordinate[0] = i;
+            setByCoordinate(sheet, variedCoordinate, colData.get(i));
+        }
+    }
+    public static List<String> getRowData(Sheet sheet, Integer rowNum){
+        if (sheet != null) {
+            List<String> strList = new ArrayList<>();
+            Row row = sheet.getRow(rowNum);
+            if (row == null) {
+                return null;
+            }
+            int lastCellNum = row.getLastCellNum();
+            for (int i = 0; i < lastCellNum; i++) {
+                Cell cell = row.getCell(i);
+                if (cell == null) {
+                    strList.add(i, null);
+                } else {
+                    strList.add(i, cell.getStringCellValue());
+                }
+            }
+            return strList;
+        }
+        return null;
+    }
+    public static void setRowData(Sheet sheet, Integer rowNum, List<String> rowData){
+        Integer[] variedCoordinate = new Integer[2];
+        variedCoordinate[0] = rowNum;
+        for (int i = 0; i < rowData.size(); i++) {
+            variedCoordinate[1] = i;
+            setByCoordinate(sheet, variedCoordinate, rowData.get(i));
+        }
+    }
+
+
+    /** todo 在指定位置插入行
+     * @param sheet 表实例
+     * @param rowNum 表示要插入位置的当前行号
+     * @param insertNum 表示要插入的行数
+     * @param preposition true 表示在当前行之前插入
+     * */
+    public static void insertRow(Sheet sheet, Integer rowNum, Integer insertNum, Boolean preposition){
+        /*if (preposition) {
+            sheet.shiftRows(5, rowNum, insertNum);
+        }*/
+
+    }
+
+
+    /** todo 根据标记获取单元格坐标
+     * @param sheet 表实例
+     * @param label 标记
+     * @return 单元格坐标： rowNum == coordinate[0]; colNum == coordinate[1]
+     * */
+    public static Integer[] getLabelCoordinate(Sheet sheet, String label){
+        if (sheet == null || label == null || "".equals(label)) {
+            return null;
+        }
+        int lastRowNum = sheet.getLastRowNum();
+        for (int i = 0; i <= lastRowNum; i++) {
+            Row row = sheet.getRow(i);
+            if (row != null) {
+                short lastCellNum = row.getLastCellNum();
+                for (int j = 0; j <= lastCellNum; j++) {
+                    Cell cell = row.getCell(j);
+                    if (cell != null) {
+                        CellType cellType = cell.getCellType();
+                        if(cellType.equals(CellType.STRING)) {
+                            String str = cell.getStringCellValue();
+                            if (str != null) {
+                                if (label.equals(str)) {
+                                    return new Integer[]{i, j};
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+    /** todo 根据指定坐标设置数据
+     * @param sheet excel 表实例
+     * @param coordinate 坐标 rowNum == coordinate[0]; colNum == coordinate[1]
+     * @return 单元格中的值，如果单元格不存在则返回 null
+     * @trap 坑：只能读取文本格式单元格中的数据
+     * @attention 如果 sheet 实例中不存在指定坐标的 cell，那么会自动创建该 cell
+     * */
+    public static String getByCoordinate(Sheet sheet, Integer[] coordinate) {
+        if (sheet != null) {
+            Row row = sheet.getRow(coordinate[0]);
+            if (row == null) {
+                return null;
+            }
+            Cell cell = row.getCell(coordinate[1]);
+            if (cell == null) {
+                return null;
+            }
+            return cell.getStringCellValue();
+        }
+        return null;
+    }
+
+
+    /** todo 根据指定坐标设置数据
+     * @param sheet excel 表实例
+     * @param coordinate 坐标 rowNum == coordinate[0]; colNum == coordinate[1]
+     * @param value 需要设置的值
+     * @attention 如果 sheet 实例中不存在指定坐标的 cell，那么会自动创建该 cell
+     * */
+    public static void setByCoordinate(Sheet sheet, Integer[] coordinate, String value) {
+        if (sheet != null) {
+            Row row = sheet.getRow(coordinate[0]);
+            if (row == null) {
+                row = sheet.createRow(coordinate[0]);
+            }
+            Cell cell = row.getCell(coordinate[1]);
+            if (cell == null) {
+                cell = row.createCell(coordinate[1]);
+            }
+            cell.setCellValue(value);
+        }
+    }
+    
+    
+    
     // 新建一个 excel 文件并横向填充数据
     public static Workbook fillDataHorizontal(List<List<String>> lists){
         Workbook workbook = new XSSFWorkbook(); // 在内存中创建一个工作簿
@@ -46,179 +277,5 @@ public class ExcelUtil {
     }
     
     
-     /**
-     * 创建excel文档，
-     * [@param](http://my.oschina.net/u/2303379) list 数据
-     * @param keys list中map的key数组集合
-     * @param columnNames excel的列名
-     * */
-	@SuppressWarnings("deprecation")
-    public static Workbook createWorkBook(List<Map<String, Object>> list, String []keys, String columnNames[], String sheetName) {
-        // 创建excel工作簿
-        Workbook wb = new HSSFWorkbook();
-        // 创建第一个sheet（页），并命名
-        Sheet sheet = wb.createSheet(sheetName);
-        // 手动设置列宽。第一个参数表示要为第几列设；，第二个参数表示列的宽度，n为列高的像素数。
-        for(int i=0;i<keys.length;i++){
-            sheet.setColumnWidth(i,(35 * 150));
-        }
-
-       int rowIndex=0;
-
-        // 创建第一行
-        Row row = sheet.createRow(rowIndex);
-
-        // 创建两种单元格格式
-        CellStyle cs = wb.createCellStyle();
-        CellStyle cs2 = wb.createCellStyle();
-
-        // 创建两种字体
-        Font f = wb.createFont();
-        Font f2 = wb.createFont();
-
-        // 创建第一种字体样式（用于列名）
-        f.setFontHeightInPoints((short) 10);
-        f.setColor(IndexedColors.BLACK.getIndex());
-        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
-
-        // 创建第二种字体样式（用于值）
-        f2.setFontHeightInPoints((short) 10);
-        f2.setColor(IndexedColors.BLACK.getIndex());
-
-//        Font f3=wb.createFont();
-//        f3.setFontHeightInPoints((short) 10);
-//        f3.setColor(IndexedColors.RED.getIndex());
-
-        // 设置第一种单元格的样式（用于列名）
-        cs.setFont(f);
-        cs.setBorderLeft(CellStyle.BORDER_THIN);
-        cs.setBorderRight(CellStyle.BORDER_THIN);
-        cs.setBorderTop(CellStyle.BORDER_THIN);
-        cs.setBorderBottom(CellStyle.BORDER_THIN);
-        cs.setAlignment(CellStyle.ALIGN_CENTER);
-
-        // 设置第二种单元格的样式（用于值）
-        cs2.setFont(f2);
-        cs2.setBorderLeft(CellStyle.BORDER_THIN);
-        cs2.setBorderRight(CellStyle.BORDER_THIN);
-        cs2.setBorderTop(CellStyle.BORDER_THIN);
-        cs2.setBorderBottom(CellStyle.BORDER_THIN);
-        cs2.setAlignment(CellStyle.ALIGN_CENTER);
-        //设置列名
-        for(int i=0;i<columnNames.length;i++){
-            Cell cell = row.createCell(i);
-            cell.setCellValue(columnNames[i]);
-            cell.setCellStyle(cs);
-        }
-        //设置每行每列的值
-        for (int i = 1; i < list.size(); i++) {
-            // Row 行,Cell 方格 , Row 和 Cell 都是从0开始计数的
-            // 创建一行，在页sheet上
-            Row row1 = sheet.createRow(i+rowIndex+1);
-            // 在row行上创建一个方格
-            for(int j=0;j<keys.length;j++){
-                Cell cell = row1.createCell(j);
-                cell.setCellValue(list.get(i).get(keys[j]) == null?" ": list.get(i).get(keys[j]).toString());
-                cell.setCellStyle(cs2);
-            }
-        }
-        return wb;
-    }
-
-
-    @SuppressWarnings("deprecation")
-	public static Workbook createWorkBook(ExportBean exportBean) {
-        // 创建excel工作簿
-        Workbook wb = new HSSFWorkbook();
-        // 创建第一个sheet（页），并命名
-        Sheet sheet = wb.createSheet(exportBean.getSheetName());
-        // 手动设置列宽。第一个参数表示要为第几列设；，第二个参数表示列的宽度，n为列高的像素数。
-        for(int i=0;i<exportBean.getThNames().size();i++){
-            sheet.setColumnWidth(i,(35 * 150));
-        }
-        // 创建两种单元格格式
-        CellStyle cs = wb.createCellStyle();
-        CellStyle cs2 = wb.createCellStyle();
-
-        // 创建两种字体
-        Font f = wb.createFont();
-        Font f2 = wb.createFont();
-
-        // 创建第一种字体样式（用于列名）
-        f.setFontHeightInPoints((short) 10);
-        f.setColor(IndexedColors.BLACK.getIndex());
-        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
-
-        // 创建第二种字体样式（用于值）
-        f2.setFontHeightInPoints((short) 10);
-        f2.setColor(IndexedColors.BLACK.getIndex());
-
-//        Font f3=wb.createFont();
-//        f3.setFontHeightInPoints((short) 10);
-//        f3.setColor(IndexedColors.RED.getIndex());
-
-        // 设置第一种单元格的样式（用于列名）
-        cs.setFont(f);
-        cs.setBorderLeft(CellStyle.BORDER_THIN);
-        cs.setBorderRight(CellStyle.BORDER_THIN);
-        cs.setBorderTop(CellStyle.BORDER_THIN);
-        cs.setBorderBottom(CellStyle.BORDER_THIN);
-        cs.setAlignment(CellStyle.ALIGN_CENTER);
-
-        // 设置第二种单元格的样式（用于值）
-        cs2.setFont(f2);
-        cs2.setBorderLeft(CellStyle.BORDER_THIN);
-        cs2.setBorderRight(CellStyle.BORDER_THIN);
-        cs2.setBorderTop(CellStyle.BORDER_THIN);
-        cs2.setBorderBottom(CellStyle.BORDER_THIN);
-        cs2.setAlignment(CellStyle.ALIGN_CENTER);
-        //设置列名
-        int rowIndex=0;
-/*
-        if(exportBean.getContainHeadTdColspan()!=null){
-            Row head = sheet.createRow(rowIndex);
-            Integer headColspan=exportBean.getContainHeadTdColspan();
-            if(headColspan!=null&&headColspan>0){
-                Cell cell;
-                for(int index=0;index<headColspan;index++){
-                    cell = head.createCell(index);
-
-                    if(index==0){
-                        cell.setCellValue(exportBean.getContainHeadTdHtml());
-                    }
-
-                }
-                sheet.addMergedRegion(new CellRangeAddress(0,0,0,headColspan-1));
-            }
-            rowIndex=rowIndex+1;
-        }
-        */
-        // 创建第一行
-        Row row = sheet.createRow(rowIndex);
-
-
-        for(int i=0;i<exportBean.getThNames().size();i++){
-            Cell cell = row.createCell(i);
-            cell.setCellValue(exportBean.getThNames().get(i));
-            cell.setCellStyle(cs);
-        }
-        //设置每行每列的值
-        if(exportBean.getDataLIst()!=null){
-            List<String> trData;
-            for (int i = 0; i < exportBean.getDataLIst().size(); i++) {
-                // Row 行,Cell 方格 , Row 和 Cell 都是从0开始计数的
-                // 创建一行，在页sheet上
-                Row row1 = sheet.createRow(i+rowIndex+1);
-                // 在row行上创建一个方格
-                trData=exportBean.getDataLIst().get(i);
-                for(int j=0;j<trData.size();j++){
-                    Cell cell = row1.createCell(j);
-                    cell.setCellValue(trData.get(j));
-                    cell.setCellStyle(cs2);
-                }
-            }
-        }
-
-        return wb;
-    }
+     
 }
