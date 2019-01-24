@@ -18,7 +18,8 @@ public class TemplateUtil {
      * @return 1 如果函数执行失败
      * @throws NullPointerException 如果 str 是空指针
      * @throws ClassNotFoundException 如果找不到类
-     * @trap 坑
+     * @trap 坑：
+     * @attention 注意：
      * */
     public Integer tempFunc(Character character, String str, Integer i){
 
