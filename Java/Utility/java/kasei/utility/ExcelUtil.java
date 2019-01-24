@@ -8,9 +8,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.List;
 
+/**
+ * @trap 坑：本工具只支持 excel 文本格式的单元格处理
+ * */
 public class ExcelUtil {
 
-	public static void demo() throws IOException {
+    public static void demo() throws IOException {
         Workbook wb = new XSSFWorkbook("C:\\Users\\kys2081\\Desktop\\Dimension.xlsx");
         Workbook wb2 = new XSSFWorkbook();
         Sheet sheet0 = wb.getSheetAt(0);
