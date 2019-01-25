@@ -1,39 +1,6 @@
 public class FileSystemUtil {
 
     
-    /** Create 
-     * */
-    public static Boolean fileSystemCreate(File file, Boolean isDirectory) {
-        if(file.exists() && file.isDirectory() == isDirectory){ // 如果 File 实例已存在 且 类型跟指定的类型相同，则直接返回 true
-            return true;
-        }
-        if(file.exists() && file.isDirectory() != isDirectory){ // 如果 File 实例已存在 且 类型跟指定的类型不同，则直接返回 false
-            return false;
-        }
-        if (isDirectory) { // 如果 File 实例是目录 且 不存在，则创建目录，创建成功返回 true
-            return file.mkdirs();
-        }
-
-        // 如过 File 实例是文件
-        File parentFile = file.getParentFile();
-        if(!parentFile.exists()){ // 如果父目录不存在
-            if(parentFile.mkdirs()){ // 如果创建父目录成功
-                return fileSystemCreateNewFile(file);
-            }
-        }
-        return fileSystemCreateNewFile(file);
-    }
-    private static Boolean fileSystemCreateNewFile(File file){
-        Boolean result = false;
-        try {
-            result = file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return result;
-    }
-    
     /** Delete
      * */
     public static Boolean delete(File file){
@@ -48,7 +15,7 @@ public class FileSystemUtil {
         // 后置递归退出条件
         return file.delete();
     }
-    
+
     /** Copy 文件目录拷贝前置检查函数
      * @trap 坑： cover 只对文件跟文件同名有效，对目录跟目录同名、目录跟文件同名、文件跟目录同名无效
      * */
@@ -119,27 +86,9 @@ public class FileSystemUtil {
         }
         return result;
     }
+    
+    
 
-
-    /** todo 将缓冲输入流写入到一个缓冲输出流中去，不关闭流，遵从流谁打开谁关闭原则
-     * */
-    public static Boolean bufferedIs2Os(BufferedInputStream bis, BufferedOutputStream bos, Integer bufferSize) {
-        try {
-            byte[] buffer = new byte[bufferSize];
-            int count = 0;
-            while ((count = bis.read(buffer)) != -1) {
-                bos.write(buffer, 0, count);
-            }
-            bos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } 
-        return true;
-    }
-    
-    
-    
     /** todo 合法的往 Map 中添加 InputStream 对象
      * @param map 存放 InputStream 对象的 Map
      * @param entryPoint map 参数的 key， key 格式为  aa/bb/cc 表示输出目录会创建 aa/bb 目录
@@ -162,37 +111,149 @@ public class FileSystemUtil {
         }
         map.put(trimEntryPoint, is); // 会覆盖之前添加的同名 key 中的对象
     }
-    
+
+
     /** todo 重定向输入流到指定的文件系统目录
      * @param isMap 输入流 Map，key 表示文件路径，最好配合 putFileIs2Map() 方法使用，避免出错
+     * @param destDir 保存文件的目标目录
+     * @param option 1 表示覆盖原来已经存在的文件 2 表示不覆盖，直接返回 false 3 表示不覆盖，跳过重复的
+     * @return
+     * @trap 坑：如果目标目录中有同名文件，会覆盖
      * */
-    public static Boolean redirectFileStream(Map<String, InputStream> isMap, File destDir)  {
+    public static Boolean write2FileStream(Map<String, InputStream> isMap, File destDir, Integer option)  {
         if (isMap == null || destDir == null || !destDir.exists()) {
             System.out.println("方法参数存在 null 值，或者目标目录不存在");
             return false;
         }
 
-        Boolean result = false;
         for (String key : isMap.keySet()) {
             File destFile = new File(destDir, key);
             if(!destFile.exists()){
-                fileSystemCreate(destFile, false);
+                if(!fileSystemCreate(destFile, false, false)){
+                    System.out.println("创建文件 " + destFile.getAbsolutePath() + "失败");
+                    return false;
+                }
+            } else if(destFile.isDirectory()){
+                System.out.println("目标文件： " + destFile.getAbsolutePath() + " 所在目录中存在同名目录");
+                return false;
+            } else if(option == 2){
+                System.out.println("目标文件： " + destFile.getAbsolutePath() + " 所在目录中存在同名文件");
+                return false;
+            } else if(option == 3){
+                continue ; // 跳过当前流的写入
             }
 
+
+            // 执行写入操作
             InputStream is = isMap.get(key);
             BufferedInputStream bis = null;
             BufferedOutputStream bos = null;
             try {
                 bis = new BufferedInputStream(is);
                 bos = new BufferedOutputStream(new FileOutputStream(destFile));
-                result = bufferedIs2Os(bis, bos, 1024);
+                if(bufferedIs2Os(bis, bos, 1024)){
+                    System.out.println("文件："+ destFile.getAbsolutePath() +" 写入出错");
+                    return false;
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return false;
+            } finally {
+                try {
+                    if (bis != null) { bis.close(); }
+                    if (bos != null) { bos.close(); }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }
+        return true;
+    }
+
+    /** todo 关闭 map 实例中所有的流
+     * */
+    public static <T extends Object> void closeAllIsInMap(Map<T, InputStream> map){
+        Set<T> set = map.keySet();
+        for (T item : set) {
+            InputStream is = map.get(item);
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /** todo 将缓冲输入流写入到一个缓冲输出流中去，不关闭流，遵从流谁打开谁关闭原则
+     * */
+    public static Boolean bufferedIs2Os(BufferedInputStream bis, BufferedOutputStream bos, Integer bufferSize) {
+        try {
+            byte[] buffer = new byte[bufferSize];
+            int count = 0;
+            while ((count = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, count);
+            }
+            bos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+
+    /** todo Create file or directory in file system
+     * @file 需要在文件系统中创建的文件
+     * @param isDirectory 表示要创建的 file 实例是否是一个目录
+     * @param overrideFile 如果创建的是文件，且存在同名文件，true 表示覆盖，false 整个函数直接返回 false
+     * @return 如果 file 实例已存在，但是和需要创建的类型不同，则返回 false，例如：存在同名目录，但是要创建的确实文件
+     * @trap 坑：如果文件或者目录已经存在，则不创建
+     * */
+    public static Boolean fileSystemCreate(File file, Boolean isDirectory, Boolean overrideFile) {
+        if(file.exists()){ // File 实例已存在
+            if(file.isDirectory() == isDirectory){ // 存在的类型和要创建的类型一致
+                if(file.isFile() && !overrideFile) { // 存在的类型是文件，但是不覆盖
+                    return false;
+                }
+                return true;
+            } else {// 存在的类型和要创建的类型不一致
+                return false;
+            }
+        } else { // File 实例不存在
+            if (isDirectory) { // 如果要创建的是目录
+                return file.mkdirs();
+            }
+
+            // 如果要创建的是文件
+            File parentFile = file.getParentFile();
+            if(!parentFile.exists()){ // 如果父目录不存在
+                if(parentFile.mkdirs()){ // 如果创建父目录成功
+                    return fileSystemCreateNewFile(file);
+                }
+                return false;
+            } else {
+                return fileSystemCreateNewFile(file);
+            }
+        }
+    }
+
+    /** todo 在文件系统中创建一个文件
+     * @param file 需要创建的抽象文件实例
+     * */
+    public static Boolean fileSystemCreateNewFile(File file){
+        Boolean result = false;
+        try {
+            result = file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
         return result;
     }
+
     
 }
 
