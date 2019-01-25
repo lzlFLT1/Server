@@ -120,7 +120,7 @@ public class FileSystemUtil {
      * @return
      * @trap 坑：如果目标目录中有同名文件，会覆盖
      * */
-    public static Boolean write2FileStream(Map<String, InputStream> isMap, File destDir, Integer option)  {
+    public static Boolean write2FileSystem(Map<String, InputStream> isMap, File destDir, Integer option)  {
         if (isMap == null || destDir == null || !destDir.exists()) {
             System.out.println("方法参数存在 null 值，或者目标目录不存在");
             return false;
