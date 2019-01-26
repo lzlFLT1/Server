@@ -127,59 +127,51 @@ Kasei 语言特性：{
 
 ************************************************************ Demo **********************************************************************
 box Byte {
-
-	// 底层汇编实现
+    // 底层汇编实现
 }
 
 
 
 box Array {   // 本身是固定长度
-	
-	Number length;
-	// 底层汇编实现
+    Number length;
+    // 底层汇编实现
 }
 
 
 
 box Char {
-	
-	Array<Byte>[4] bytes;
+    Array<Byte>[4] bytes;
 }
 
 
 
 box String {	// 不是固定长度
-
-	Array<Char> chars;
+    Array<Char> chars;
 }
 
 
 
 
 box Number {
-	
-	String str;
+    String str; // 所有运算通过字符串的加减来算，不通过 CPU 底层逻辑模块
 }
 
 
 
 box Date {
-
-	Number num;
+    Number num;
 }
 
 
 
 box Container {
-	
-	// 所有自定义容器的根容器
+    // 所有自定义容器的根容器
 }
 
 
 
 box MyContainer {
-
-	Container container; // 自动且必须包含
+    Container container; // 自动且必须包含
 }
 */
 
