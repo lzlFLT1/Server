@@ -80,17 +80,12 @@ java.lang.NullPointException
     Boolean bool = "".equals(str);  // 避免空指针检查
     String result = (str==null) ? "" : str.substring(1, 4); // 使用三目运算比使用 if 判断要简洁明了
 
- /*
-JVM -- Java Virtrual Machine -- Java 虚拟机
-JRE -- Java Runtime Environment -- Java 运行时环境
-JDK -- Java Development Kit -- Java 开发工具包
-1.java.lang包下的80％以上的类的功能的灵活运用。
-2.java.util包下的80％以上的类的灵活运用，特别是集合类体系、正规表达式、时间、属性、和Timer.
-3.java.io包下的60％以上的类的使用，理解IO体系的基于管道模型的设计思路以及常用IO类的特性和使用场合。
-4.java.math包下的100％的内容。
-5.java.net包下的60％以上的内容，对各个类的功能比较熟悉。
-6.java.text包下的60％以上的内容，特别是各种格式化类。
-7.熟练运用jdbc
-8.java.security包下40％以上的内容，若对安全没了解，就不可能掌握java.
-9.XML处理，熟悉SAX、DOM以及JDOM的优缺点并且能够使用其中的一种完成XML的解析及内容处理。
-*/
+Java 内部类：静态内部类、普通内部类、局部内部类、匿名内部类
+    访问修饰符：外部类：public, default；内部类：public, protect, default, private
+    访问权限：外部类访问内部类，不受访问修饰符控制，都可访问
+    
+
+
+
+
+
