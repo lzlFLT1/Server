@@ -10,8 +10,16 @@ public class InnerClassInstance {
         System.out.println("内部类访问外部类成员函数：InnerClass.ddl()");
     }
 	
+    public void bb(){
+        Hh hh = new Hh(); // 外部类想要访问内部类里的字段或方法，必须新建一个内部类对象
+        System.out.println(hh.priStr); // 坑：外部类中可以直接访问内部类私有成员，而不受访问修饰符影响
+        
+    }
+    
+    
     //内部类
     public class Hh{
+        private String priStr = "内部类私有字段";
         //1、内部类中可直接访问外部类的所有成员
         void print(){
             System.out.println("内部类访问外部类成员变量：i = " + i);
