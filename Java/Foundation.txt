@@ -82,7 +82,7 @@ java.lang.NullPointException
 
 Java 内部类：静态内部类、普通内部类、局部内部类、匿名内部类
     访问修饰符：外部类：public, default；内部类：public, protect, default, private
-    访问权限：外部类访问内部类，不受访问修饰符控制，都可访问
+    访问权限：外部类访问内部类，不受访问修饰符控制，都可访问；其他类访问内部类，先看内部类本身的修饰符，然后在看内部类里面的方法和字段的修饰符
     
 
 
