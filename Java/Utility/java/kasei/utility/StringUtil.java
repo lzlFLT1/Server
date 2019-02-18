@@ -100,4 +100,14 @@ public class StringUtil {
         result = originalStr + result;
         return result;
     }
+	
+    /**
+     * todo 替换字符串中的控制字符 [\x00-\x1F\x7F]
+     * */
+    public static String cleanCtrlChar(String original){
+        if (original == null) {
+            return null;
+        }
+        return original.replaceAll("\\p{Cntrl}", "");
+    }
 }
