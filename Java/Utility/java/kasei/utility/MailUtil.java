@@ -12,8 +12,8 @@ public class MailUtil {
 
     /** todo 发送一封邮件 */
     public static void sendOneMail() throws MessagingException, GeneralSecurityException {
-        final String toAddress = "YS.keshunfeng@h3c.com";
-        final String fromAdress = "375513255@qq.com";
+        final String toAddress = "****@163.com";
+        final String fromAdress = "****@qq.com";
         final String mailServer = "smtp.qq.com";  // QQ 邮件服务器
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "smtp"); // 设置邮件协议
@@ -29,7 +29,7 @@ public class MailUtil {
         Session session = Session.getInstance(props, new Authenticator(){
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                PasswordAuthentication passwordAuthentication = new PasswordAuthentication("375513255@qq.com", "yqniutbfczstbida"); // 发送邮箱地址 和 授权码（不是密码）
+                PasswordAuthentication passwordAuthentication = new PasswordAuthentication("****@qq.com", "yqni****da"); // 发送邮箱地址 和 授权码（不是密码）
                 return passwordAuthentication;
             }
         });
