@@ -1,0 +1,2 @@
+什么是 Node.js ？
+    Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行环境，该环境运行在浏览器之外，所以它可以作为服务器端语言
