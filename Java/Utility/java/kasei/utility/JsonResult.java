@@ -1,4 +1,4 @@
-public class JsonResult<T>{
+final public class JsonResult<T>{
     private int code;
     private String msg;
     private T data;
