@@ -3,7 +3,9 @@ public class JsonResult<T>{
     private String msg;
     private T data;
 
-
+    public JsonResult(){
+    }
+    
     public JsonResult(int code, String msg, T data) {
         this.code = code;
         this.msg = msg;
