@@ -4,7 +4,7 @@ package kasei.javase.se.objectoriented.classes;
  * */
 //在另一个类中创建内部类对象语法：必须先存在外部类对象，才能创建内部类对象,
 //OuterClass.InnerClass innerObj = outerObj.new InnerClass();
-public class InnerClassInstance {
+public class InnerClass {
     private int i;
     private void ddl(){
         System.out.println("内部类访问外部类成员函数：InnerClass.ddl()");
