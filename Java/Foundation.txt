@@ -85,6 +85,15 @@ Java 内部类：静态内部类、普通内部类、局部内部类、匿名内
     访问权限：外部类访问内部类，不受访问修饰符控制，都可访问；其他类访问内部类，先看内部类本身的修饰符，然后在看内部类里面的方法和字段的修饰符
     
 
+Java 项目包结构：
+    kasei                               # 根包
+    kasei.controller                    # Web 访问层
+    kasei.service                       # 业务服务层
+    kasei.repository                    # 数据持久层
+    kasei.extension                     # Global 扩展包
+    kasei.utility                       # Global 工具包
+    kasei.exception                     # Global 异常包
+    
 
 
 
