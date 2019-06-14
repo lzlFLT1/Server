@@ -75,7 +75,7 @@ dependencies {
     compile group: 'com.oracle.jdbc', name: 'ucp', version: '12.2.0.1'
 
     /** 数据库连接池 */
-    
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.3.1'
     
 
 }
