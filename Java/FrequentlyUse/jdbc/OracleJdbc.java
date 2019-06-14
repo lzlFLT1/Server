@@ -2,8 +2,15 @@ package main.java.se.jdbc;
 
 import java.sql.*;
 
-class K02Oracle 
-{
+class OracleJdbc {
+	
+	/** todo URL 基本格式 jdbc:oracle:<drivertype>:<username/password>@<database> */
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args)
 	{
 		/* Oracle 数据类型：
