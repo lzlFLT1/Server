@@ -87,5 +87,28 @@ public class FlowControl {
                 System.out.println("地方");
         }
     }
+    
+    
+    public static String _try_catch_finally(){
+        String str = null;
+        try{
+            str.trim();     // 报空指针异常
+            System.out.println("try");
+        } catch(NullPointerException e){
+            System.out.println("catch");
+            return "异常结束";          // 这里 return 也会先执行 finally
+        } finally {         // finally 在 return 之前执行
+            try{
+                str.trim();
+                System.out.println("finally");
+            } catch(Exception e){
+                // 吞掉所有 finally 异常，并输出 log
+                System.out.println(e.getMessage());
+            } 
+        }
+        
+        System.out.println("normal");
+        return "正常结束";
+    }
 
 }
