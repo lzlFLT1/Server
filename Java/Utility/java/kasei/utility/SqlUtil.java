@@ -51,10 +51,11 @@ public class SqlUtil{
     /** todo 输入 sql 直接将结果导出到 excel 中
      * @param sql 不能为 null 
      * @param headers excel 标题
+     * @param connection jdbc 数据库连接
      * @return Workbook 实例
      * @trap 支持导出的数据库列类型：number, date, datetime, clob, varchar; 其他类型无法导出
      * */
-    public static Workbook export2ExcelFromSql(@NotNull String sql, String[] headers) throws SQLException {
+    public static Workbook export2ExcelFromSql(@NotNull String sql, String[] headers, Connection connection) throws SQLException {
 
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet();
@@ -65,7 +66,7 @@ public class SqlUtil{
         CellStyle cellStyle = wb.createCellStyle();
         cellStyle.setFont(font);
 
-        Connection connection = OracleJdbc.getOracleConnection(); // 获取数据库链接
+        //Connection connection = OracleJdbc.getOracleConnection(); // 获取数据库链接
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
 
